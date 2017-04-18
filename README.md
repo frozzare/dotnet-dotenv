@@ -4,7 +4,7 @@
 
 Use `.env` with ASP.NET Core.
 
-This package will try to go around [FileSystem #232](https://github.com/aspnet/FileSystem/issues/232) that don't allow hidden files.
+This package will try to go around [FileSystem #232](https://github.com/aspnet/FileSystem/issues/232) bug that don't allow hidden files.
 
 ## Installation
 
