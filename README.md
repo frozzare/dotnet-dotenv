@@ -22,8 +22,6 @@ public class Startup
       .AddDotenvFile(".env", optional: false, reloadOnChange: true);
     Configuration = builder.Build();
   }
-  
-  public IConfigurationRoot Configuration { get; }
 }
 ```
 
