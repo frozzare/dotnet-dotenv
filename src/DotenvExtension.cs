@@ -117,22 +117,22 @@ namespace Frozzare.Dotenv
 
             if (fileExists)
             {
-				if (provider == null && Path.IsPathRooted(path))
-				{
-					// Real PhysicalFileProvider has a bug that don't allow dot files:
-					// https://github.com/aspnet/FileSystem/issues/232
-					provider = new FileProvider.PhysicalFileProvider(Path.GetDirectoryName(path));
-					path = Path.GetFileName(path);
-				}
+                if (provider == null && Path.IsPathRooted(path))
+                {
+                    // Real PhysicalFileProvider has a bug that don't allow dot files:
+                    // https://github.com/aspnet/FileSystem/issues/232
+                    provider = new FileProvider.PhysicalFileProvider(Path.GetDirectoryName(path));
+                    path = Path.GetFileName(path);
+                }
 
-				var source = new DotenvConfigurationSource
-				{
-					Path = path,
-					Optional = optional,
-					FileProvider = provider,
-					ReloadOnChange = reloadOnChange
-				};
-				builder.Add(source);
+                var source = new DotenvConfigurationSource
+                {
+                    Path = path,
+                    Optional = optional,
+                    FileProvider = provider,
+                    ReloadOnChange = reloadOnChange
+                };
+                builder.Add(source);
 			}
             return builder;
         }
