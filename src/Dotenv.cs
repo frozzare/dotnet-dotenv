@@ -115,7 +115,7 @@ namespace Frozzare.Dotenv
         {
             var lines = content.Split('\n');
             var vars = new Dictionary<string, string>();
-            var regex = new Regex(@"^(?:export|)\s*([^\d+][\w_]+)\s?=\s?(.+)");
+            var regex = new Regex(@"^(?:export|)\s*([^\d+][:\w_]+)\s?=\s?(.+)");
             for (int i = 0; i < lines.Length; i++)
             {
                 var matches = regex.Match(lines[i]);
