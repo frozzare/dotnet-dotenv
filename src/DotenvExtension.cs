@@ -103,29 +103,37 @@ namespace Frozzare.Dotenv
                 basePaths.Add(basePath2.TrimEnd('/'));
             }
 
-            var fileExists = false;
-            foreach (var basePath in basePaths)
+            if (provider == null)
             {
-                var testPath = string.Join("/", new string[] { basePath, path });
-                if (File.Exists(testPath))
+                var fileExists = false;
+                foreach (var basePath in basePaths)
                 {
-                    fileExists = true;
-                    path = testPath;
-                    break;
+                    var testPath = string.Join("/", new string[] { basePath, path });
+                    if (File.Exists(testPath))
+                    {
+                        fileExists = true;
+                        path = testPath;
+                        break;
+                    }
+                }
+                if (!fileExists && !optional)
+                {
+                    throw new Exception( $"The .env configuration file '{path}' was not found");
+                }
+                if (Path.IsPathRooted(path))
+                {
+                    // Real PhysicalFileProvider has a bug that don't allow dot files:
+                    // https://github.com/aspnet/FileSystem/issues/232
+                    provider = new FileProvider.PhysicalFileProvider(Path.GetDirectoryName(path));
+                    path = Path.GetFileName(path);
                 }
             }
-
-            if (!fileExists)
+            else
             {
-                throw new Exception("The configuration file .env was not found");
-            }
-
-            if (provider == null && Path.IsPathRooted(path))
-            {
-                // Real PhysicalFileProvider has a bug that don't allow dot files:
-                // https://github.com/aspnet/FileSystem/issues/232
-                provider = new FileProvider.PhysicalFileProvider(Path.GetDirectoryName(path));
-                path = Path.GetFileName(path);
+                if ( !provider.GetFileInfo(path).Exists)
+                {
+                    throw new Exception( $"The configuration file {path} could not be found.");
+                }
             }
 
             var source = new DotenvConfigurationSource
