@@ -25,7 +25,6 @@ namespace TestHelper {
 		private string MakeFileName() {
 			DateTime now = DateTime.Now;
 			return FILENAME + $"-{now.Millisecond}";
-			// return FILENAME + $"-{now.Year}-{now.Month}-{now.Day}-{now.Hour}-{now.Minute}";
 		}
 
 		private void CreateNewFile(string body) {
