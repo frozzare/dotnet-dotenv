@@ -135,7 +135,7 @@ namespace Frozzare.Dotenv
                     throw new Exception( $"The configuration file {path} could not be found.");
                 }
             }
-
+            
             var source = new DotenvConfigurationSource
             {
                 Path = path,

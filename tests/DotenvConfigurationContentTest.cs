@@ -23,49 +23,51 @@ namespace Frozzare.Dotenv.Tests
 
     public class DotenvConfigurationContentTest
     {
-        private string _ConfigBody;
-        private ConfigurationBuilder _Builder;
+        const string _ConfigBody= @"
+			Foobar = ""hi there""
+			Love_underscore = ""True""
+			Logging_LogLevel_Simple = ""Special""
+			Logging:IncludeScopes = false
+			Logging:LogLevel_Default = ""Warning""
+			Logging:LogLevel_Microsoft = ""Error""
+			Logging:LogLevel:Flux = ""Trace""
+			Logging:LogLevel:System = ""Blue""
+		";
 
         public DotenvConfigurationContentTest()
         {
-            _ConfigBody = @"
-				Foobar = ""hi there""
-				Love_underscore = ""True""
-				Logging_LogLevel_Simple = ""Special""
-				Logging:IncludeScopes = false
-				Logging:LogLevel_Default = ""Warning""
-				Logging:LogLevel_Microsoft = ""Error""
-				Logging:LogLevel:Flux = ""Trace""
-				Logging:LogLevel:System = ""Blue""
-			";
-            _Builder = new ConfigurationBuilder();
         }
 
         public class _files_from_filesystem_ : DotenvConfigurationContentTest, IDisposable
         {
             private TemporaryTestFile _TestFile;
             protected IConfigurationRoot _Config;
+            private ConfigurationBuilder _Builder;
 
             public _files_from_filesystem_()
             {
-                _TestFile = new TemporaryTestFile(_ConfigBody);
-                SetupConfig(_TestFile);
             }
 
             public void Dispose()
             {
                 _TestFile.Dispose();
+                _TestFile = null;
+                _Builder = null;
+                _Config = null;
             }
 
-            private void SetupConfig(TemporaryTestFile temp)
+            private void SetupConfig()
             {
-                _Builder.AddDotenvFile(path: temp.Path);
+                _TestFile = new TemporaryTestFile(_ConfigBody);
+                _Builder = new ConfigurationBuilder();
+                _Builder.AddDotenvFile(path: _TestFile.Path);
                 _Config = _Builder.Build();
             }
 
             [Fact]
             public void simple_key_can_be_fetched()
             {
+                SetupConfig();
                 Assert.Equal("hi there", _Config["Foobar"]);
             }
 
@@ -75,9 +77,14 @@ namespace Frozzare.Dotenv.Tests
         {
             private MockFileProvider _MockProvider;
             protected IConfigurationRoot _Config;
+            private ConfigurationBuilder _Builder;
 
             public _mock_file_provider_() : base()
             {
+            }
+
+            protected void Setup() {
+                _Builder = new ConfigurationBuilder();
                 _MockProvider = new MockFileProvider(_ConfigBody);
                 _Builder.AddDotenvFile(provider: _MockProvider, path: _MockProvider.Path, optional: false, reloadOnChange: false);
                 _Config = _Builder.Build();
@@ -86,6 +93,7 @@ namespace Frozzare.Dotenv.Tests
             [Fact]
             public void long_key_can_be_fetched()
             {
+                Setup();
                 Assert.Equal("Special", _Config["Logging_LogLevel_Simple"]);
             }
 
@@ -93,7 +101,9 @@ namespace Frozzare.Dotenv.Tests
             public void key_in_section_can_be_retrieved()
             {
                 const string SECTION_KEY = "LogLevel_Default";
+                Setup();
                 var section = _Config.GetSection("Logging");
+
                 Assert.NotNull(section[SECTION_KEY]);
                 Assert.True(section[SECTION_KEY].Length > 0);
             }
@@ -105,6 +115,7 @@ namespace Frozzare.Dotenv.Tests
 
                 public when_in_subsection_section() : base()
                 {
+                    Setup();
                     _Logging = _Config?.GetSection("Logging") ?? null;
                     _LogLevel = _Logging?.GetSection("LogLevel") ?? null;
                 }
@@ -112,6 +123,7 @@ namespace Frozzare.Dotenv.Tests
                 [Fact]
                 public void subsection_of_subsection_can_be_dereferenced()
                 {
+                    Setup();
                     Assert.Equal("Trace", _LogLevel["Flux"]);
                 }
             }

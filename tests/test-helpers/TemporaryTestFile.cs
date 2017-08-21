@@ -7,6 +7,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace TestHelper
 {
@@ -24,6 +25,7 @@ namespace TestHelper
             _Content = body;
 			EnsureNoFile();
 			CreateNewFile(body);
+            WaitForFilesystemToCatchUpToMakeTestsMoreReliable();
 		}
 
 		public void Dispose()
@@ -32,6 +34,17 @@ namespace TestHelper
 		}
 
 		public string Path { get { return _FilenameUsed; } }
+
+        private void WaitForFilesystemToCatchUpToMakeTestsMoreReliable() {
+            int ExcessiveWaitingLimit = 100;
+            while(! File.Exists(_FilenameUsed)) {
+                Thread.Sleep(1);
+                ExcessiveWaitingLimit--;
+                if (ExcessiveWaitingLimit == 0) {
+                    throw new Exception("System took too long to finish writing file - must be some other timing problem.");
+                }
+            }
+        }
 
 		private string MakeFileName()
 		{
@@ -59,3 +72,4 @@ namespace TestHelper
 	}
 
 }
+
