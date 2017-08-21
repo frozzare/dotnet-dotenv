@@ -11,9 +11,9 @@ using System.Collections.Generic;
 namespace TestHelper
 {
 
-	public partial class MockFileProvider : IDisposable, IFileProvider
-	{
-		const string FILENAME = "./.env.NeverToResolve";
+    public partial class MockFileProvider : IDisposable, IFileProvider
+    {
+        const string FILENAME = "./.env.NeverToResolve";
         const long LONG_TIME = 1000000;
 
         private string _Content;
@@ -24,26 +24,26 @@ namespace TestHelper
         private Action _ChangeCallback;
         private Action _UsageAction;
 
-		public MockFileProvider(string body)
-		{
-            _UsageAction = () => {};
+        public MockFileProvider(string body)
+        {
+            _UsageAction = () => { };
             _Content = body;
             _FileExists = true;
             _FileChanged = false;
-            _LastChanged = DateTimeOffset.FromFileTime( LONG_TIME );
+            _LastChanged = DateTimeOffset.FromFileTime(LONG_TIME);
             _ChangeToken = new MockChangeToken(this);
-		}
+        }
 
-		public void Dispose()
-		{
-		}
+        public void Dispose()
+        {
+        }
 
         public void SetUsageAction(Action action)
         {
             _UsageAction = action;
         }
 
-		public string Path { get { ObserveUsage(); return FILENAME; } }
+        public string Path { get { ObserveUsage(); return FILENAME; } }
 
         public MockFileProvider PretendFileExists(bool state)
         {
@@ -53,7 +53,8 @@ namespace TestHelper
 
         public MockFileProvider PretendFileChanged(bool state)
         {
-            if (state) {
+            if (state)
+            {
                 _LastChanged = DateTimeOffset.Now;
                 _FileChanged = true;
                 NotifyChanges();
@@ -61,26 +62,28 @@ namespace TestHelper
             return this;
         }
 
-		IFileInfo IFileProvider.GetFileInfo(string subpath)
-		{
-		    return new MockFileInfo(this);
-		}
+        IFileInfo IFileProvider.GetFileInfo(string subpath)
+        {
+            return new MockFileInfo(this);
+        }
 
-		IDirectoryContents IFileProvider.GetDirectoryContents(string subpath)
-		{
-			throw new NotImplementedException();
-		}
+        IDirectoryContents IFileProvider.GetDirectoryContents(string subpath)
+        {
+            throw new NotImplementedException();
+        }
 
-		IChangeToken IFileProvider.Watch(string filter)
-		{
-			return new MockChangeToken(this);
-		}
+        IChangeToken IFileProvider.Watch(string filter)
+        {
+            return new MockChangeToken(this);
+        }
 
-        private void AddChangeListener(Action listener) {
+        private void AddChangeListener(Action listener)
+        {
             _ChangeCallback += listener;
         }
 
-        private void NotifyChanges() {
+        private void NotifyChanges()
+        {
             _ChangeCallback();
         }
 
@@ -88,6 +91,6 @@ namespace TestHelper
         {
             _UsageAction();
         }
-	}
+    }
 
 }

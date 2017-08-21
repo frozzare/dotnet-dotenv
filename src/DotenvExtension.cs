@@ -105,6 +105,9 @@ namespace Frozzare.Dotenv
 
             if (provider == null)
             {
+                //--
+                // The below is still needed for .NET Core 1.x
+                //--
                 var fileExists = false;
                 foreach (var basePath in basePaths)
                 {
@@ -118,7 +121,7 @@ namespace Frozzare.Dotenv
                 }
                 if (!fileExists && !optional)
                 {
-                    throw new Exception( $"The .env configuration file '{path}' was not found");
+                    throw new Exception($"The .env configuration file '{path}' was not found");
                 }
                 if (Path.IsPathRooted(path))
                 {
@@ -130,12 +133,18 @@ namespace Frozzare.Dotenv
             }
             else
             {
-                if ( !provider.GetFileInfo(path).Exists)
+                //--
+                // For .NET Core 2.0 and above, the PhysicalFileProvider has ways to deal
+                // with hidden files.
+                // See the change: https://github.com/aspnet/FileSystem/pull/280/files
+                // This also allowed MockFileProvider to be plugged in for unit testing.
+                //--
+                if (!provider.GetFileInfo(path).Exists)
                 {
-                    throw new Exception( $"The configuration file {path} could not be found.");
+                    throw new Exception($"The configuration file {path} could not be found.");
                 }
             }
-            
+
             var source = new DotenvConfigurationSource
             {
                 Path = path,

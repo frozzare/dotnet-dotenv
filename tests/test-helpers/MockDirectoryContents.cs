@@ -8,26 +8,26 @@ namespace TestHelper
 {
     partial class MockFileProvider
     {
-		internal class MockDirectoryContents : IDirectoryContents
-		{
+        internal class MockDirectoryContents : IDirectoryContents
+        {
             private bool _IndicateExistence;
-			public MockDirectoryContents(bool doesExist)
-			{
+            public MockDirectoryContents(bool doesExist)
+            {
                 _IndicateExistence = doesExist;
-			}
+            }
 
-			bool IDirectoryContents.Exists => _IndicateExistence;
+            bool IDirectoryContents.Exists => _IndicateExistence;
 
-			IEnumerator<IFileInfo> IEnumerable<IFileInfo>.GetEnumerator()
-			{
-				throw new NotImplementedException();
-			}
+            IEnumerator<IFileInfo> IEnumerable<IFileInfo>.GetEnumerator()
+            {
+                throw new NotImplementedException();
+            }
 
-			IEnumerator IEnumerable.GetEnumerator()
-			{
-				throw new NotImplementedException();
-			}
-		}
-        
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
     }
 }
