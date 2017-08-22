@@ -10,37 +10,37 @@ namespace TestHelper
     partial class MockFileProvider
     {
         internal class MockFileInfo : IFileInfo
-		{
+        {
             private MockFileProvider _Provider;
 
-			public MockFileInfo(MockFileProvider provider)
-			{
+            public MockFileInfo(MockFileProvider provider)
+            {
                 _Provider = provider;
-			}
+            }
 
-			bool IFileInfo.Exists => _Provider._FileExists;
+            bool IFileInfo.Exists => _Provider._FileExists;
 
-			long IFileInfo.Length => _Provider._Content.Length;
+            long IFileInfo.Length => _Provider._Content.Length;
 
-			string IFileInfo.PhysicalPath => throw new NotImplementedException();
+            string IFileInfo.PhysicalPath => throw new NotImplementedException();
 
-			string IFileInfo.Name => MockFileProvider.FILENAME;
+            string IFileInfo.Name => MockFileProvider.FILENAME;
 
-			DateTimeOffset IFileInfo.LastModified => _Provider._LastChanged;
+            DateTimeOffset IFileInfo.LastModified => _Provider._LastChanged;
 
-			bool IFileInfo.IsDirectory => false;
+            bool IFileInfo.IsDirectory => false;
 
-			Stream IFileInfo.CreateReadStream()
-			{
+            Stream IFileInfo.CreateReadStream()
+            {
                 return MakeStreamFromContent();
-			}
+            }
 
             private MemoryStream MakeStreamFromContent()
             {
-                byte[] contentBytes = Encoding.ASCII.GetBytes( _Provider._Content );
-                return new MemoryStream( contentBytes );
+                byte[] contentBytes = Encoding.ASCII.GetBytes(_Provider._Content);
+                return new MemoryStream(contentBytes);
             }
-		}
-        
+        }
+
     }
 }
