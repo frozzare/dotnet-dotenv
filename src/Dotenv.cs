@@ -9,13 +9,14 @@ namespace Frozzare.Dotenv
     {
         /// <summary>
         /// Default dotenv file path.
+        /// Does not need to change.
         /// </summary>
-        public static string DefaultPath = "./.env";
+        public static readonly string DefaultPath = "./.env";
 
         /// <summary>
         /// Parsed environment variables.
         /// </summary>
-        protected Dictionary<string, string> variables = new Dictionary<string, string>();
+        private Dictionary<string, string> variables = new Dictionary<string, string>();
 
         /// <summary>
         /// Load dotenv file, parse file and add variables as environment variables.
@@ -46,7 +47,13 @@ namespace Frozzare.Dotenv
         /// <returns>Dotenv instance.</returns>
         public static Dotenv Load(Stream input)
         {
-            return new Dotenv(new StreamReader(input).ReadToEnd());
+            string dotEnvContent = "";
+            // Ensure resources are cleaned up after the read...
+            using( var reader = new StreamReader(input))
+            {
+                dotEnvContent = reader.ReadToEnd();
+            }
+            return new Dotenv(dotEnvContent);
         }
 
         /// <summary>
@@ -55,7 +62,18 @@ namespace Frozzare.Dotenv
         /// <returns>Dictionary of environment variables.</returns>
         public Dictionary<string, string> GetVariables()
         {
-            return variables;
+            // Return a copy so caller cannot modify internal state.
+            return CloneVariables( );
+        }
+
+        private Dictionary<string, string> CloneVariables()
+        {
+            var clone = new Dictionary<string, string>(variables.Count, variables.Comparer);
+            foreach(KeyValuePair<string,string> item in variables)
+            {
+                clone.Add(item.Key, item.Value);
+            }
+            return clone;
         }
 
         /// <summary>

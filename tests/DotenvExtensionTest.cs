@@ -1,10 +1,10 @@
 
 /*
- * Written by Warwick Molloy GitHub|@WazzaMo
- * to ensure AspNetCore log configuration can be
- * specified as per AspNetCore documentation
- * and code templates.
- */
+* Written by Warwick Molloy GitHub|@WazzaMo
+* to ensure AspNetCore log configuration can be
+* specified as per AspNetCore documentation
+* and code templates.
+*/
 
 using System;
 using System.IO;
@@ -29,14 +29,14 @@ namespace Frozzare.Dotenv.Tests
         public DotenvExtensionTest()
         {
             _ConfigBody = @"
-				Foobar = ""hi there""
-				Logging:IncludeScopes = false
-				Logging:LogLevel_Default = ""Warning""
-				Logging:LogLevel_Microsoft = ""Error""
-				Logging:LogLevel:Flux = ""Trace""
-				Logging:LogLevel:Simple = ""Special""
-				Logging:LogLevel:System = ""Blue""
-			";
+                Foobar = ""hi there""
+                Logging:IncludeScopes = false
+                Logging:LogLevel_Default = ""Warning""
+                Logging:LogLevel_Microsoft = ""Error""
+                Logging:LogLevel:Flux = ""Trace""
+                Logging:LogLevel:Simple = ""Special""
+                Logging:LogLevel:System = ""Blue""
+            ";
         }
 
         public class _AddDotenvFile_all_arguments_overload : DotenvExtensionTest

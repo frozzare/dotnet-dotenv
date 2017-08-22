@@ -15,6 +15,7 @@ namespace TestHelper
     public class TemporaryTestFile : IDisposable
     {
         const string FILENAME = "./.env";
+        const int WAIT_TIME = 10;
 
         private string _FilenameUsed;
         private string _Content;
@@ -23,7 +24,6 @@ namespace TestHelper
         {
             _FilenameUsed = MakeFileName();
             _Content = body;
-            EnsureNoFile();
             CreateNewFile(body);
             WaitForFilesystemToCatchUpToMakeTestsMoreReliable();
         }
@@ -40,7 +40,7 @@ namespace TestHelper
             int ExcessiveWaitingLimit = 100;
             while (!File.Exists(_FilenameUsed))
             {
-                Thread.Sleep(1);
+                Thread.Sleep(WAIT_TIME);
                 ExcessiveWaitingLimit--;
                 if (ExcessiveWaitingLimit == 0)
                 {
@@ -57,7 +57,10 @@ namespace TestHelper
 
         private void CreateNewFile(string body)
         {
-            using (StreamWriter writer = File.AppendText(_FilenameUsed))
+            // Open temporary for write and overwrite if file exists.
+            // Don't append as that may result in an unknown configuration
+            // state.
+            using (StreamWriter writer = File.CreateText(_FilenameUsed) )
             {
                 writer.Write(body);
                 writer.Flush();
