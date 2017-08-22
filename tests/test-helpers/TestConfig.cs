@@ -17,6 +17,19 @@ using TestHelper;
 
 namespace Frozzare.Dotenv.Tests
 {
+    /*
+    The test configuration files and the configuration of the environment are a shared
+    resource that can collide between the different threads executing tests. For reliable
+    unit test execution, this class is needed to control concurrency on these
+    resources and increase locality of these variables.
+
+    Use this in dispose pattern to ensure the Mutex lock is acquired and released.
+
+    using(var Test = new TestConfig() )
+    {
+        ... test lines ...
+    }
+     */
     public class TestConfig : IDisposable
     {
         //-- Dotenv can have race conditions when loaded by concurrent threads.
@@ -31,6 +44,7 @@ namespace Frozzare.Dotenv.Tests
             Logging:LogLevel:Flux = ""Trace""
             Logging:LogLevel:System = ""Blue""
         ";
+
         public TemporaryTestFile TestFile;
         public ConfigurationBuilder Builder;
         public IConfigurationRoot Config;
@@ -67,9 +81,6 @@ namespace Frozzare.Dotenv.Tests
                     +$"  Problem: {e.Message}\n"
                     +$"  Stack:   {e.StackTrace}\n"
                 );
-            }
-            finally
-            {
             }
         }
     }
