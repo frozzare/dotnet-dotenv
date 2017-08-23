@@ -1,9 +1,3 @@
-/*
-* Written by Warwick Molloy GitHub|@WazzaMo
-* to ensure AspNetCore log configuration can be
-* specified as per AspNetCore documentation
-* and code templates.
-*/
 
 using System;
 using System.IO;

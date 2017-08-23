@@ -71,7 +71,6 @@ namespace TestHelper
         {
             if (File.Exists(_FilenameUsed))
             {
-                System.Console.WriteLine($"Removing old {_FilenameUsed} file");
                 File.Delete(_FilenameUsed);
             }
         }

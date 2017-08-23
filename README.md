@@ -70,3 +70,4 @@ NOT_SKIPPED1=not skipped # will have the value `not`
 # License
 
 MIT © [Fredrik Forsmo](https://github.com/frozzare)
+With contributions from [Warwick Molloy](https://github.com/wazzamo)

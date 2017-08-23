@@ -66,6 +66,13 @@ namespace Frozzare.Dotenv
             return CloneVariables( );
         }
 
+        /// <summary>
+        /// Returns a copy of the environment variables to the caller. The clone is limited depth
+        /// to one level only but this should suffice in most cases to separate the call from the
+        /// Dotenv instance. The objective was to protect against the caller having the internal 
+        /// state variable of Dotenv.
+        /// </summary>
+        /// <returns>A one-level deep copy of the dictionary of the environment variables.</returns>
         private Dictionary<string, string> CloneVariables()
         {
             var clone = new Dictionary<string, string>(variables.Count, variables.Comparer);
