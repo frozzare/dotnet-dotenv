@@ -103,37 +103,56 @@ namespace Frozzare.Dotenv
                 basePaths.Add(basePath2.TrimEnd('/'));
             }
 
-            var fileExists = false;
-            foreach (var basePath in basePaths)
+            if (provider == null)
             {
-                var testPath = string.Join("/", new string[] { basePath, path });
-                if (File.Exists(testPath))
+                //--
+                // The below is still needed for .NET Core 1.x
+                //--
+                var fileExists = false;
+                foreach (var basePath in basePaths)
                 {
-                    fileExists = true;
-                    path = testPath;
-                    break;
+                    var testPath = string.Join("/", new string[] { basePath, path });
+                    if (File.Exists(testPath))
+                    {
+                        fileExists = true;
+                        path = testPath;
+                        break;
+                    }
                 }
-            }
-
-            if (fileExists)
-            {
-                if (provider == null && Path.IsPathRooted(path))
+                if (!fileExists && !optional)
+                {
+                    throw new Exception($"The .env configuration file '{path}' was not found");
+                }
+                if (Path.IsPathRooted(path))
                 {
                     // Real PhysicalFileProvider has a bug that don't allow dot files:
                     // https://github.com/aspnet/FileSystem/issues/232
                     provider = new FileProvider.PhysicalFileProvider(Path.GetDirectoryName(path));
                     path = Path.GetFileName(path);
                 }
-
-                var source = new DotenvConfigurationSource
+            }
+            else
+            {
+                //--
+                // For .NET Core 2.0 and above, the PhysicalFileProvider has ways to deal
+                // with hidden files.
+                // See the change: https://github.com/aspnet/FileSystem/pull/280/files
+                // This also allowed MockFileProvider to be plugged in for unit testing.
+                //--
+                if (!provider.GetFileInfo(path).Exists)
                 {
-                    Path = path,
-                    Optional = optional,
-                    FileProvider = provider,
-                    ReloadOnChange = reloadOnChange
-                };
-                builder.Add(source);
-			}
+                    throw new Exception($"The configuration file {path} could not be found.");
+                }
+            }
+
+            var source = new DotenvConfigurationSource
+            {
+                Path = path,
+                Optional = optional,
+                FileProvider = provider,
+                ReloadOnChange = reloadOnChange
+            };
+            builder.Add(source);
             return builder;
         }
     }
